@@ -16,14 +16,14 @@ export default function CreateCrew() {
     if (!user) return;
 
     const { data, error } = await supabase
-      .from('crews')
+      .from('crew')
       .insert([{ name, festival, created_by: user.id }])
       .select()
       .single();
 
     if (data && !error) {
       await supabase
-        .from('crew_members')
+        .from('crew_member')
         .insert([{ user_id: user.id, crew_id: data.id }]);
       router.push(`/crew/${data.id}`);
     } else {
