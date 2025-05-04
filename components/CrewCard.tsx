@@ -1,6 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
-
+import { Card, CardContent } from '@/components/ui/card';
 type CrewCardProps = {
   id: string;
   name: string;
@@ -8,15 +7,20 @@ type CrewCardProps = {
 };
 
 export default function CrewCard({ id, name, festival }: CrewCardProps) {
-  const router = useRouter();
-
   return (
-    <div
-      onClick={() => router.push(`/crew/${id}`)}
-      className='p-4 border rounded hover:bg-purple-50 cursor-pointer transition-colors'
-    >
-      <p className='font-bold'>{name}</p>
-      <p className='text-sm text-gray-600'>Festival: {festival}</p>
+    <div>
+      <Card className='bg-white hover:shadow-lg transition-shadow'>
+        <CardContent>
+          <h3 className='text-lg font-bold text-purple-600'>{name}</h3>
+          <p className='text-sm text-gray-600'>Festival: {festival}</p>
+          <a
+            href={`/crew/${id}`}
+            className='text-sm text-purple-500 underline mt-2 inline-block'
+          >
+            View Crew
+          </a>
+        </CardContent>
+      </Card>
     </div>
   );
 }

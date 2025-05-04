@@ -76,27 +76,24 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className='max-w-lg mx-auto mt-10'>
-      {/* Welcome header with user email */}
-      <h1 className='text-2xl font-bold mb-4'>Welcome, {user?.email}</h1>
+    <div className='max-w-2xl mx-auto px-4 py-10 space-y-8'>
+      <h1 className='text-3xl font-bold text-purple-700'>
+        Welcome, {user?.email}
+      </h1>
 
-      {/* Crew list section */}
-      <h2 className='text-lg font-semibold mb-2'>Your Crews</h2>
-      <ul className='space-y-3'>
-        {/* Render a CrewCard for each crew */}
-        {crews.map((crew) => (
-          <CrewCard
-            key={crew.id}
-            id={crew.id}
-            name={crew.name}
-            festival={crew.festival}
-          />
-        ))}
-      </ul>
+      <div>
+        <h2 className='text-xl font-semibold mb-4'>Your Crews</h2>
+        <ul className='space-y-4'>
+          {crews.map((crew) => (
+            <CrewCard key={crew.id} {...crew} />
+          ))}
+        </ul>
+      </div>
 
-      {/* Button/component to create a new crew */}
-      <CreateCrew />
-      <JoinCrew />
+      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+        <CreateCrew />
+        <JoinCrew />
+      </div>
     </div>
   );
 }
