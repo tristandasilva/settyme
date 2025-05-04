@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
-import CreateCrew from './CreateCrew';
+import CreateCrew from '../../components/CreateCrew';
 import CrewCard from '@/components/CrewCard';
 import { createClient } from '@/lib/supabase/client';
+import JoinCrew from '@/components/JoinCrew';
 
 // Type definition for a single crew
 type Crew = {
@@ -95,6 +96,7 @@ export default function DashboardPage() {
 
       {/* Button/component to create a new crew */}
       <CreateCrew />
+      <JoinCrew />
     </div>
   );
 }
