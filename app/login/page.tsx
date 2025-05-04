@@ -1,7 +1,7 @@
 'use client'; // Enables client-side rendering in Next.js
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase'; // Supabase client for auth
+import { createClient } from '../../lib/supabase/client'; // Supabase client for authentication
 import { useRouter } from 'next/navigation'; // Next.js router for redirecting
 
 export default function LoginPage() {
@@ -16,7 +16,7 @@ export default function LoginPage() {
   // Handles both login and signup based on isLogin flag
   const handleAuth = async () => {
     setLoading(true); // Show loading state
-
+    const supabase = createClient(); // Create a new Supabase client instance
     // Choose login or signup based on current state
     const { error } = isLogin
       ? await supabase.auth.signInWithPassword({ email, password })
@@ -25,8 +25,9 @@ export default function LoginPage() {
     setLoading(false); // Reset loading state
 
     // If successful, redirect to dashboard. Otherwise, show error.
-    if (!error) router.push('/dashboard');
-    else alert(error.message);
+    if (!error) {
+      router.push('/dashboard'); // Redirect to dashboard on success
+    } else alert(error.message);
   };
 
   return (

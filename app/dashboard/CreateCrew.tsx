@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client'; // Supabase client for database operations
 import { useRouter } from 'next/navigation';
 
 export default function CreateCrew() {
@@ -9,6 +9,7 @@ export default function CreateCrew() {
   const router = useRouter();
 
   const handleCreate = async () => {
+    const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -52,6 +53,7 @@ export default function CreateCrew() {
       </button>
       <button
         onClick={async () => {
+          const supabase = createClient();
           await supabase.auth.signOut();
           router.push('/login');
         }}
