@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { CheckCircle, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 type PackingItem = {
   id: string;
@@ -65,39 +67,58 @@ export default function PackingPage() {
   };
 
   return (
-    <div className='max-w-lg mx-auto mt-10 px-4'>
-      <h1 className='text-2xl font-bold mb-6'>Packing List</h1>
+    <div className='max-w-2xl mx-auto px-4 py-10 space-y-8'>
+      {/* Gradient Header */}
+      <header className='rounded-xl bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
+        <h1 className='text-3xl font-extrabold'>Packing List</h1>
+        <p className='text-sm text-white/80 mt-1'>Check it off as you go ✨</p>
+      </header>
 
-      <div className='flex gap-2 mb-6'>
+      {/* Input */}
+      <div className='flex gap-2'>
         <input
           type='text'
-          placeholder='Add item...'
+          placeholder='Add an item...'
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
-          className='flex-1 border p-2 rounded'
+          className='flex-1 p-3 border border-purple-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500'
         />
-        <button
+        <Button
           onClick={addItem}
-          className='bg-purple-600 text-white px-4 py-2 rounded'
+          className='h-[48px] bg-purple-600 hover:bg-purple-700 text-white gap-2'
         >
+          <Plus size={16} />
           Add
-        </button>
+        </Button>
       </div>
 
-      <ul className='space-y-2'>
+      {/* Checklist */}
+      <ul className='space-y-3'>
         {items.map((item) => (
           <li
             key={item.id}
-            className='flex items-center gap-2 p-2 bg-white border rounded'
+            className={`flex items-center justify-between p-3 border rounded-lg shadow-sm ${
+              item.checked ? 'bg-gray-100' : 'bg-white'
+            }`}
           >
-            <input
-              type='checkbox'
-              checked={item.checked}
-              onChange={() => toggleItem(item)}
-            />
-            <span className={item.checked ? 'line-through text-gray-500' : ''}>
-              {item.label}
-            </span>
+            <label className='flex items-center gap-3 cursor-pointer'>
+              <input
+                type='checkbox'
+                checked={item.checked}
+                onChange={() => toggleItem(item)}
+                className='accent-purple-600 w-5 h-5'
+              />
+              <span
+                className={`text-sm ${
+                  item.checked ? 'line-through text-gray-500' : 'text-gray-800'
+                }`}
+              >
+                {item.label}
+              </span>
+            </label>
+            {item.checked && (
+              <CheckCircle className='text-purple-500' size={18} />
+            )}
           </li>
         ))}
       </ul>

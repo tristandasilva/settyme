@@ -22,18 +22,16 @@ export default function JoinCrew() {
 
     if (!user) return router.push('/login');
 
-    // Try to find crew by name (or invite code if you use one)
     const { data: crew, error: crewError } = await supabase
       .from('crew')
       .select('id')
-      .eq('name', code) // could also be invite_code
+      .eq('name', code)
       .single();
 
     if (crewError || !crew) {
       return setError('Crew not found.');
     }
 
-    // Check if already a member
     const { data: existing } = await supabase
       .from('crew_member')
       .select('*')
@@ -45,7 +43,6 @@ export default function JoinCrew() {
       return setError('You’re already in this crew.');
     }
 
-    // Join the crew
     const { error: insertError } = await supabase
       .from('crew_member')
       .insert({ user_id: user.id, crew_id: crew.id });
@@ -62,27 +59,33 @@ export default function JoinCrew() {
       <DialogTrigger asChild>
         <Button
           variant='outline'
-          className='w-full gap-2 text-purple-700 border-purple-700 hover:bg-purple-50'
+          className='w-full gap-2 border-2 border-purple-600 text-purple-700 bg-white hover:bg-purple-50 transition'
         >
           <Users size={18} /> Join a Crew
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Join a Crew</DialogTitle>
+
+      <DialogContent className='space-y-4'>
+        <DialogTitle className='text-2xl font-bold text-purple-700 text-center'>
+          Join a Crew
+        </DialogTitle>
+
         <input
           type='text'
           placeholder='Enter crew name'
-          className='w-full border p-2 rounded'
+          className='w-full border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 rounded'
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
+
         <button
           onClick={handleJoin}
-          className='bg-purple-600 text-white px-4 py-2 rounded w-full'
+          className='w-full bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded font-semibold transition'
         >
-          Join
+          Join Crew
         </button>
-        {error && <p className='text-red-500 text-sm mt-4'>{error}</p>}
+
+        {error && <p className='text-red-500 text-sm text-center'>{error}</p>}
       </DialogContent>
     </Dialog>
   );

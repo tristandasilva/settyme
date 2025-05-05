@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client'; // Supabase client for database operations
+import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
@@ -37,30 +37,31 @@ export default function CreateCrew() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant='default'
-          className='w-full gap-2 bg-purple-700 hover:bg-purple-800'
-        >
+        <Button className='w-full gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold hover:opacity-90 transition'>
           <PlusCircle size={18} /> Create Crew
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Create a Crew</DialogTitle>
+      <DialogContent className='space-y-4'>
+        <DialogTitle className='text-2xl font-bold text-purple-700 text-center'>
+          Create a New Crew
+        </DialogTitle>
+
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder='Crew Name'
-          className='border p-2 rounded'
+          className='w-full border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 rounded'
         />
         <input
           value={festival}
           onChange={(e) => setFestival(e.target.value)}
           placeholder='Festival Name'
-          className='w-full border p-2 rounded mb-3'
+          className='w-full border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 rounded'
         />
+
         <button
           onClick={handleCreate}
-          className='bg-green-600 text-white px-4 py-2 rounded w-full'
+          className='w-full bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded font-semibold transition'
         >
           Create Crew
         </button>

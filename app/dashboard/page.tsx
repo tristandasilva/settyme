@@ -61,7 +61,7 @@ export default function DashboardPage() {
   return (
     <div className='max-w-3xl mx-auto px-4 py-8 space-y-10'>
       {/* Gradient header */}
-      <header className='flex justify-between items-center px-5 py-4 rounded-lg shadow-md bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600'>
+      <header className='flex justify-between items-center px-5 py-4 rounded- shadow-md bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600'>
         <h1 className='text-xl font-bold text-white tracking-wide'>SetTyme</h1>
         <Button
           variant='ghost'
@@ -80,7 +80,7 @@ export default function DashboardPage() {
       {/* Welcome text */}
       <div className='text-center'>
         <h2 className='text-3xl font-extrabold text-purple-700 mb-2'>
-          Welcome, {user?.email}
+          Welcome, {user?.user_metadata.name || 'User'}!
         </h2>
         <p className='text-gray-600'>Let&apos;s get your crew festival-ready</p>
       </div>
