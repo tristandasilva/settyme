@@ -11,7 +11,7 @@ export default function CrewCard({ id, name, festival }: CrewCardProps) {
     <div>
       <Card className='bg-white hover:shadow-lg transition-shadow'>
         <CardContent>
-          <h3 className='text-lg font-bold text-purple-600'>{name}</h3>
+          <h3 className='text-lg font-bold text-purple-700'>{name}</h3>
           <p className='text-sm text-gray-600'>Festival: {festival}</p>
           <a
             href={`/crew/${id}`}

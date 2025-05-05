@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from './ui/dialog';
+import { Button } from './ui/button';
+import { Users } from 'lucide-react';
 
 export default function JoinCrew() {
   const [code, setCode] = useState('');
@@ -55,22 +58,32 @@ export default function JoinCrew() {
   };
 
   return (
-    <div className='max-w-sm mx-auto mt-10 space-y-4'>
-      <h2 className='text-xl font-bold'>Join a Crew</h2>
-      <input
-        type='text'
-        placeholder='Enter crew name'
-        className='w-full border p-2 rounded'
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-      />
-      <button
-        onClick={handleJoin}
-        className='bg-purple-600 text-white px-4 py-2 rounded w-full'
-      >
-        Join
-      </button>
-      {error && <p className='text-red-500 text-sm'>{error}</p>}
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant='outline'
+          className='w-full gap-2 text-purple-700 border-purple-700 hover:bg-purple-50'
+        >
+          <Users size={18} /> Join a Crew
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Join a Crew</DialogTitle>
+        <input
+          type='text'
+          placeholder='Enter crew name'
+          className='w-full border p-2 rounded'
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        />
+        <button
+          onClick={handleJoin}
+          className='bg-purple-600 text-white px-4 py-2 rounded w-full'
+        >
+          Join
+        </button>
+        {error && <p className='text-red-500 text-sm mt-4'>{error}</p>}
+      </DialogContent>
+    </Dialog>
   );
 }

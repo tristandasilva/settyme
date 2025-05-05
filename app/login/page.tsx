@@ -1,79 +1,142 @@
-'use client'; // Enables client-side rendering in Next.js
+'use client';
 
-import { useState } from 'react';
-import { createClient } from '../../lib/supabase/client'; // Supabase client for authentication
-import { useRouter } from 'next/navigation'; // Next.js router for redirecting
+import { useEffect, useState } from 'react';
+import { createClient } from '../../lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 
 export default function LoginPage() {
   const router = useRouter();
 
-  // State for user credentials and UI behavior
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Disables button while loading
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and sign-up views
+  const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Handles both login and signup based on isLogin flag
+  useEffect(() => {
+    const checkUser = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data.user) router.push('/dashboard');
+    };
+    checkUser();
+  }, [router]);
+
   const handleAuth = async () => {
-    setLoading(true); // Show loading state
-    const supabase = createClient(); // Create a new Supabase client instance
-    // Choose login or signup based on current state
-    const { error } = isLogin
-      ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password });
+    setLoading(true);
+    const supabase = createClient();
 
-    setLoading(false); // Reset loading state
+    // Password match check (only on signup)
+    if (!isLogin && password !== confirmPassword) {
+      setLoading(false);
+      alert('Passwords do not match!');
+      return;
+    }
+    let error;
 
-    // If successful, redirect to dashboard. Otherwise, show error.
-    if (!error) {
-      router.push('/dashboard'); // Redirect to dashboard on success
-    } else alert(error.message);
+    if (isLogin) {
+      ({ error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      }));
+    } else {
+      ({ error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          },
+        },
+      }));
+    }
+
+    setLoading(false);
+    if (!error) router.push('/dashboard');
+    else alert(error.message);
   };
 
   return (
-    <div className='max-w-sm mx-auto mt-20'>
-      {/* Page heading changes depending on mode */}
-      <h1 className='text-xl font-bold mb-4'>
-        {isLogin ? 'Login' : 'Sign Up'}
-      </h1>
+    <div className='flex items-center justify-center h-dvh bg-gradient-to-br from-purple-700 via-indigo-600 to-pink-500 px-4'>
+      <Card className='mx-auto w-full max-w-md bg-white/90 backdrop-blur shadow-xl rounded-xl'>
+        <CardHeader>
+          <div className='text-center space-y-2'>
+            <h1 className='text-3xl font-extrabold text-purple-700'>SetTyme</h1>
+            <p className='text-gray-600 text-sm'>
+              {isLogin
+                ? 'Welcome back, festie fam ✨'
+                : 'Join the crew and let’s plan your best fest yet!'}
+            </p>
+          </div>
+        </CardHeader>
 
-      {/* Email input field */}
-      <input
-        type='email'
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder='Email'
-        className='border p-2 w-full mb-3'
-      />
+        <CardContent className='space-y-4'>
+          {/* Show Name first if signing up */}
+          {!isLogin && (
+            <input
+              type='text'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder='Name'
+              className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+            />
+          )}
 
-      {/* Password input field */}
-      <input
-        type='password'
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder='Password'
-        className='border p-2 w-full mb-3'
-      />
+          <input
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder='Email'
+            className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+          />
 
-      {/* Submit button - label changes based on login/signup */}
-      <button
-        onClick={handleAuth}
-        disabled={loading}
-        className='bg-purple-600 text-white px-4 py-2 rounded w-full'
-      >
-        {loading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
-      </button>
+          <input
+            type='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder='Password'
+            className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+          />
 
-      {/* Toggle between login and signup modes */}
-      <p className='text-center mt-4'>
-        {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className='text-purple-600 underline'
-        >
-          {isLogin ? 'Sign Up' : 'Log In'}
-        </button>
-      </p>
+          {/* Confirm Password only for Sign Up */}
+          {!isLogin && (
+            <input
+              type='password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder='Confirm Password'
+              className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+            />
+          )}
+
+          <button
+            onClick={handleAuth}
+            disabled={loading}
+            className='bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold px-4 py-2 rounded w-full hover:opacity-90 transition'
+          >
+            {loading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
+          </button>
+        </CardContent>
+
+        <CardFooter className='text-center mt-4 flex flex-col gap-2'>
+          <p className='text-sm text-gray-600'>
+            {isLogin ? "Don't have an account?" : 'Already have an account?'}
+          </p>
+          <button
+            onClick={() => setIsLogin(!isLogin)}
+            className='text-purple-700 hover:underline text-sm font-medium'
+          >
+            {isLogin ? 'Sign Up' : 'Log In'}
+          </button>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

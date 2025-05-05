@@ -1,62 +1,47 @@
-'use client'; // This directive tells Next.js to render this component on the client side
+'use client';
 
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
-import CreateCrew from '../../components/CreateCrew';
-import CrewCard from '@/components/CrewCard';
 import { createClient } from '@/lib/supabase/client';
-import JoinCrew from '@/components/JoinCrew';
 
-// Type definition for a single crew
+import CrewCard from '@/components/CrewCard';
+import CreateCrew from '@/components/CreateCrew';
+import JoinCrew from '@/components/JoinCrew';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
+
 type Crew = {
   id: string;
   name: string;
   festival: string;
 };
 
-// Type definition for a row returned from the 'crew_member' table
-// Each row includes a related 'crew' object
 type CrewMemberRow = {
   crew: Crew;
 };
 
 export default function DashboardPage() {
   const router = useRouter();
-
-  // Store the logged-in user
   const [user, setUser] = useState<User | null>(null);
-
-  // Store the list of crews the user is part of
   const [crews, setCrews] = useState<Crew[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const supabase = createClient();
-
-      // Attempt to get the current authenticated user
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      // Redirect to login page if no user is found
-      if (!user) {
-        return router.push('/login');
-      } else {
-        // Otherwise, set the user in state
-        setUser(user);
-      }
+      if (!user) return router.push('/login');
+      setUser(user);
 
-      // Fetch all crews that the user belongs to (via the 'crew_member' join table)
       const { data, error } = await supabase
         .from('crew_member')
-        .select('crew(id, name, festival)') // Select specific fields from the related 'crew' table
-        .eq('user_id', user.id); // Filter by current user's ID
+        .select('crew(id, name, festival)')
+        .eq('user_id', user.id);
 
       if (data) {
-        // console.log(data); // Optional debug: see raw data from Supabase
-
-        // Transform the data into an array of Crew objects
         const mapped: Crew[] = (data as unknown as CrewMemberRow[]).map(
           (item) => ({
             id: item.crew.id,
@@ -64,36 +49,69 @@ export default function DashboardPage() {
             festival: item.crew.festival,
           })
         );
-
-        // console.log(mapped); // Optional debug: see final mapped data
-        setCrews(mapped); // Save to state
+        setCrews(mapped);
       } else {
-        console.error('Error fetching crews:', error?.message); // Log any fetch errors
+        console.error('Error fetching crews:', error?.message);
       }
     };
 
-    fetchData(); // Run the data-fetching logic when the component mounts
+    fetchData();
   }, []);
 
   return (
-    <div className='max-w-2xl mx-auto px-4 py-10 space-y-8'>
-      <h1 className='text-3xl font-bold text-purple-700'>
-        Welcome, {user?.email}
-      </h1>
+    <div className='max-w-3xl mx-auto px-4 py-8 space-y-10'>
+      {/* Gradient header */}
+      <header className='flex justify-between items-center px-5 py-4 rounded-lg shadow-md bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600'>
+        <h1 className='text-xl font-bold text-white tracking-wide'>SetTyme</h1>
+        <Button
+          variant='ghost'
+          className='text-white hover:bg-white/10 transition-colors'
+          onClick={async () => {
+            const supabase = createClient();
+            await supabase.auth.signOut();
+            router.push('/login');
+          }}
+        >
+          <LogOut size={18} className='mr-2' />
+          Log Out
+        </Button>
+      </header>
 
-      <div>
-        <h2 className='text-xl font-semibold mb-4'>Your Crews</h2>
-        <ul className='space-y-4'>
-          {crews.map((crew) => (
-            <CrewCard key={crew.id} {...crew} />
-          ))}
-        </ul>
+      {/* Welcome text */}
+      <div className='text-center'>
+        <h2 className='text-3xl font-extrabold text-purple-700 mb-2'>
+          Welcome, {user?.email}
+        </h2>
+        <p className='text-gray-600'>Let&apos;s get your crew festival-ready</p>
       </div>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+      {/* Crew Section */}
+      <section>
+        <h3 className='text-xl font-semibold text-gray-800 mb-4'>Your Crews</h3>
+
+        {crews.length === 0 ? (
+          <div className='bg-white border border-dashed border-purple-300 p-6 rounded-xl text-center shadow-sm'>
+            <p className='text-lg font-medium text-gray-700 mb-2'>
+              You’re not part of any crews yet!
+            </p>
+            <p className='text-sm text-gray-500 mb-4'>
+              You can create a new one or join an existing crew to get started.
+            </p>
+          </div>
+        ) : (
+          <ul className='space-y-4'>
+            {crews.map((crew) => (
+              <CrewCard key={crew.id} {...crew} />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Crew Actions */}
+      <section className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         <CreateCrew />
         <JoinCrew />
-      </div>
+      </section>
     </div>
   );
 }

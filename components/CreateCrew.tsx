@@ -2,6 +2,9 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client'; // Supabase client for database operations
 import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from './ui/dialog';
+import { Button } from './ui/button';
+import { PlusCircle } from 'lucide-react';
 
 export default function CreateCrew() {
   const [name, setName] = useState('');
@@ -32,34 +35,36 @@ export default function CreateCrew() {
   };
 
   return (
-    <div className='max-w-sm mx-auto mt-10'>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder='Crew Name'
-        className='border p-2 w-full mb-3'
-      />
-      <input
-        value={festival}
-        onChange={(e) => setFestival(e.target.value)}
-        placeholder='Festival Name'
-        className='border p-2 w-full mb-3'
-      />
-      <button
-        onClick={handleCreate}
-        className='bg-green-600 text-white px-4 py-2 rounded w-full'
-      >
-        Create Crew
-      </button>
-      <button
-        onClick={async () => {
-          const supabase = createClient();
-          await supabase.auth.signOut();
-          router.push('/login');
-        }}
-      >
-        Log out
-      </button>
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant='default'
+          className='w-full gap-2 bg-purple-700 hover:bg-purple-800'
+        >
+          <PlusCircle size={18} /> Create Crew
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Create a Crew</DialogTitle>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder='Crew Name'
+          className='border p-2 rounded'
+        />
+        <input
+          value={festival}
+          onChange={(e) => setFestival(e.target.value)}
+          placeholder='Festival Name'
+          className='w-full border p-2 rounded mb-3'
+        />
+        <button
+          onClick={handleCreate}
+          className='bg-green-600 text-white px-4 py-2 rounded w-full'
+        >
+          Create Crew
+        </button>
+      </DialogContent>
+    </Dialog>
   );
 }
