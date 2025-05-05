@@ -8,8 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import CrewCard from '@/components/CrewCard';
 import CreateCrew from '@/components/CreateCrew';
 import JoinCrew from '@/components/JoinCrew';
-import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import NavBar from '@/components/NavBar';
 
 type Crew = {
   id: string;
@@ -60,8 +59,9 @@ export default function DashboardPage() {
 
   return (
     <div className='max-w-3xl mx-auto px-4 py-8 space-y-10'>
+      <NavBar variant='gradient' />
       {/* Gradient header */}
-      <header className='flex justify-between items-center px-5 py-4 rounded- shadow-md bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600'>
+      {/* <header className='flex justify-between items-center px-5 py-4 rounded- shadow-md bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600'>
         <h1 className='text-xl font-bold text-white tracking-wide'>SetTyme</h1>
         <Button
           variant='ghost'
@@ -75,7 +75,7 @@ export default function DashboardPage() {
           <LogOut size={18} className='mr-2' />
           Log Out
         </Button>
-      </header>
+      </header> */}
 
       {/* Welcome text */}
       <div className='text-center'>

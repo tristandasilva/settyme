@@ -15,10 +15,11 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -33,34 +34,34 @@ export default function LoginPage() {
     setLoading(true);
     const supabase = createClient();
 
-    // Password match check (only on signup)
     if (!isLogin && password !== confirmPassword) {
       setLoading(false);
-      alert('Passwords do not match!');
-      return;
+      return alert('Passwords do not match!');
     }
+
     let error;
 
     if (isLogin) {
-      ({ error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      }));
+      ({ error } = await supabase.auth.signInWithPassword({ email, password }));
+      if (!error) router.push('/dashboard');
     } else {
-      ({ error } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            name,
-          },
+          data: { name },
         },
-      }));
+      });
+
+      error = signUpError;
+
+      if (!error) {
+        setSignUpSuccess(true);
+      }
     }
 
     setLoading(false);
-    if (!error) router.push('/dashboard');
-    else alert(error.message);
+    if (error) alert(error.message);
   };
 
   return (
@@ -78,64 +79,79 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent className='space-y-4'>
-          {/* Show Name first if signing up */}
-          {!isLogin && (
-            <input
-              type='text'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder='Name'
-              className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
-            />
+          {/* Confirmation message replaces form on sign-up success */}
+          {signUpSuccess ? (
+            <div className='text-center space-y-3'>
+              <h2 className='text-xl font-semibold text-purple-700'>
+                🎉 Almost there!
+              </h2>
+              <p className='text-gray-600'>
+                Please check your email to confirm your account before logging
+                in.
+              </p>
+            </div>
+          ) : (
+            <>
+              {!isLogin && (
+                <input
+                  type='text'
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder='Name'
+                  className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+                />
+              )}
+
+              <input
+                type='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder='Email'
+                className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+              />
+
+              <input
+                type='password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder='Password'
+                className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+              />
+
+              {!isLogin && (
+                <input
+                  type='password'
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder='Confirm Password'
+                  className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+                />
+              )}
+
+              <button
+                onClick={handleAuth}
+                disabled={loading}
+                className='bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold px-4 py-2 rounded w-full hover:opacity-90 transition'
+              >
+                {loading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
+              </button>
+            </>
           )}
-
-          <input
-            type='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder='Email'
-            className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
-          />
-
-          <input
-            type='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder='Password'
-            className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
-          />
-
-          {/* Confirm Password only for Sign Up */}
-          {!isLogin && (
-            <input
-              type='password'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder='Confirm Password'
-              className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
-            />
-          )}
-
-          <button
-            onClick={handleAuth}
-            disabled={loading}
-            className='bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold px-4 py-2 rounded w-full hover:opacity-90 transition'
-          >
-            {loading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
-          </button>
         </CardContent>
 
-        <CardFooter className='text-center mt-4 flex flex-col gap-2'>
-          <p className='text-sm text-gray-600'>
-            {isLogin ? "Don't have an account?" : 'Already have an account?'}
-          </p>
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className='text-purple-700 hover:underline text-sm font-medium'
-          >
-            {isLogin ? 'Sign Up' : 'Log In'}
-          </button>
-        </CardFooter>
+        {!signUpSuccess && (
+          <CardFooter className='text-center mt-4 flex flex-col gap-2'>
+            <p className='text-sm text-gray-600'>
+              {isLogin ? "Don't have an account?" : 'Already have an account?'}
+            </p>
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className='text-purple-700 hover:underline text-sm font-medium'
+            >
+              {isLogin ? 'Sign Up' : 'Log In'}
+            </button>
+          </CardFooter>
+        )}
       </Card>
     </div>
   );

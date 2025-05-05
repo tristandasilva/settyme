@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Users, PackageCheck, Car } from 'lucide-react';
+import NavBar from '@/components/NavBar';
 
 type Crew = {
   id: string;
@@ -65,6 +66,7 @@ export default function CrewPage() {
 
   return (
     <div className='max-w-3xl mx-auto px-4 py-10 space-y-10'>
+      <NavBar variant='default' />
       {/* Gradient Header */}
       <header className='rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
         <h1 className='text-3xl font-extrabold'>{crew.name}</h1>
