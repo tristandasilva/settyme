@@ -50,12 +50,12 @@ export default function NavBar({ variant = 'default' }: NavBarProps) {
             SetTyme
           </Link>
           <div className='hidden md:flex items-center space-x-4'>
-            {/* <Link
+            <Link
               href='/dashboard'
               className={`text-sm ${textColor} ${hoverColor}`}
             >
               Dashboard
-            </Link> */}
+            </Link>
             {crewId && (
               <>
                 <Link

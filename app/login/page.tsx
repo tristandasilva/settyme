@@ -16,7 +16,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
@@ -49,7 +50,7 @@ export default function LoginPage() {
         email,
         password,
         options: {
-          data: { name },
+          data: { firstName, lastName },
         },
       });
 
@@ -66,7 +67,7 @@ export default function LoginPage() {
 
   return (
     <div className='flex items-center justify-center h-dvh bg-gradient-to-br from-purple-700 via-indigo-600 to-pink-500 px-4'>
-      <Card className='mx-auto w-full max-w-md bg-white/90 backdrop-blur shadow-xl rounded-xl'>
+      <Card className='mx-auto w-full max-w-md bg-white/95 backdrop-blur shadow-xl rounded-xl'>
         <CardHeader>
           <div className='text-center space-y-2'>
             <h1 className='text-3xl font-extrabold text-purple-700'>SetTyme</h1>
@@ -93,13 +94,22 @@ export default function LoginPage() {
           ) : (
             <>
               {!isLogin && (
-                <input
-                  type='text'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder='Name'
-                  className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
-                />
+                <>
+                  <input
+                    type='text'
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder='First Name'
+                    className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+                  />
+                  <input
+                    type='text'
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder='Last Name'
+                    className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
+                  />
+                </>
               )}
 
               <input
