@@ -57,11 +57,11 @@ export default function CrewPage() {
       // Fetch crew members
       const { data: memberData, error: memberError } = await supabase
         .from('crew')
-        .select('users(id, first_name, last_name)')
+        .select('profiles(id, first_name, last_name)')
         .eq('id', id);
 
-      if (!memberError && memberData[0].users) {
-        setMembers(memberData[0].users);
+      if (!memberError && memberData[0].profiles) {
+        setMembers(memberData[0].profiles);
         console.log(members);
       } else {
         console.error('Error fetching members:', memberError);

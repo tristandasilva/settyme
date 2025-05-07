@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import CrewCard from '@/components/CrewCard';
 import CreateCrew from '@/components/CreateCrew';
@@ -22,8 +22,10 @@ type CrewMemberRow = {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
   const [crews, setCrews] = useState<Crew[]>([]);
+  const [profile, setProfile] = useState<{ first_name: string } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +35,18 @@ export default function DashboardPage() {
       } = await supabase.auth.getUser();
 
       if (!user) return router.push('/login');
-      setUser(user);
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('first_name')
+        .eq('id', user.id)
+        .single();
+
+      if (profileData) {
+        setProfile(profileData);
+      } else {
+        console.error('Error fetching profile:', profileError?.message);
+      }
+      setLoading(false);
 
       const { data, error } = await supabase
         .from('crew_member')
@@ -79,10 +92,18 @@ export default function DashboardPage() {
 
       {/* Welcome text */}
       <div className='text-center'>
-        <h2 className='text-3xl font-extrabold text-purple-700 mb-2'>
-          Welcome, {user?.user_metadata.name || 'User'}!
-        </h2>
-        <p className='text-gray-600'>Let&apos;s get your crew festival-ready</p>
+        {loading ? (
+          <Skeleton className='h-8 w-40 mx-auto rounded-md' />
+        ) : (
+          <h2 className='text-3xl font-extrabold text-purple-700 mb-2'>
+            Welcome, {profile?.first_name || 'User'}!
+          </h2>
+        )}
+        {!loading && (
+          <p className='text-gray-600'>
+            Let&apos;s get your crew festival-ready
+          </p>
+        )}
       </div>
 
       {/* Crew Section */}
