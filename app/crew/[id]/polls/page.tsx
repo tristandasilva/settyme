@@ -53,33 +53,53 @@ export default function CrewPollsPage() {
   return (
     <div className='max-w-4xl mx-auto px-4 py-8 space-y-8'>
       <NavBar variant='gradient' />
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center px-1.5'>
         <h1 className='text-2xl font-extrabold text-purple-700'>
           Artist Voting Polls
         </h1>
-        <Button
-          onClick={() => {
-            setNavigating(true);
-            router.push(`/crew/${crewId}/polls/new`);
-          }}
-          disabled={navigating}
-          className='bg-gradient-to-r from-purple-600 to-pink-500 text-white flex items-center gap-2'
-        >
-          {navigating ? (
-            <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
-          ) : (
-            'Create New Poll'
-          )}
-        </Button>
+        {polls.length > 0 && (
+          <Button
+            onClick={() => {
+              setNavigating(true);
+              router.push(`/crew/${crewId}/polls/new`);
+            }}
+            disabled={navigating}
+            className='bg-gradient-to-r from-purple-600 to-pink-500 text-white flex items-center gap-2'
+          >
+            {navigating ? (
+              <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+            ) : (
+              'Create New Poll'
+            )}
+          </Button>
+        )}
       </div>
       {loading ? (
-        <div className='flex justify-center items-center h-48'>
+        <div className='flex justify-center items-center h-96'>
           <Loader />
         </div>
       ) : polls.length === 0 ? (
-        <div className='text-center text-gray-600'>
-          <p>No polls yet for this crew.</p>
-          <p>Start the voting fun by creating one!</p>
+        <div className='text-center border border-dashed border-purple-300 bg-white/90 p-6 rounded-xl shadow-sm'>
+          <p className='text-lg font-semibold text-purple-700 mb-1'>
+            No polls yet 🗳️
+          </p>
+          <p className='text-sm text-gray-600 mb-4'>
+            Looks like your crew hasn&apos;t voted on any set conflicts yet.
+          </p>
+          <Button
+            onClick={() => {
+              setNavigating(true);
+              router.push(`/crew/${crewId}/polls/new`);
+            }}
+            disabled={navigating}
+            className='bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition'
+          >
+            {navigating ? (
+              <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+            ) : (
+              'Create the First Poll'
+            )}
+          </Button>
         </div>
       ) : (
         <ul className='space-y-4'>
@@ -87,7 +107,7 @@ export default function CrewPollsPage() {
             <Link
               key={poll.id}
               href={`/crew/${crewId}/polls/${poll.id}`}
-              className='block border border-purple-200 rounded-lg p-4 hover:bg-purple-50 transition'
+              className='block border border-purple-200 rounded-lg px-4 py-7 hover:bg-purple-50 transition'
             >
               <h2 className='font-bold text-purple-700 mb-2'>
                 {poll.title || 'Set Conflict'}

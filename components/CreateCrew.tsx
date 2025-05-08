@@ -12,6 +12,9 @@ export default function CreateCrew() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const generateJoinCode = () =>
+    Math.random().toString(36).substring(2, 8).toUpperCase();
+
   const handleCreate = async () => {
     setLoading(true);
     const supabase = createClient();
@@ -20,9 +23,10 @@ export default function CreateCrew() {
     } = await supabase.auth.getUser();
     if (!user) return;
 
+    const joinCode = generateJoinCode();
     const { data, error } = await supabase
       .from('crew')
-      .insert([{ name, festival, created_by: user.id }])
+      .insert([{ name, festival, created_by: user.id, join_code: joinCode }])
       .select()
       .single();
 

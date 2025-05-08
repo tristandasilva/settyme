@@ -10,10 +10,12 @@ import { Users } from 'lucide-react';
 export default function JoinCrew() {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const supabase = createClient();
   const router = useRouter();
 
   const handleJoin = async () => {
+    setLoading(true);
     setError('');
 
     const {
@@ -25,10 +27,11 @@ export default function JoinCrew() {
     const { data: crew, error: crewError } = await supabase
       .from('crew')
       .select('id')
-      .eq('name', code)
+      .eq('join_code', code)
       .single();
 
     if (crewError || !crew) {
+      setLoading(false);
       return setError('Crew not found.');
     }
 
@@ -40,6 +43,7 @@ export default function JoinCrew() {
       .single();
 
     if (existing) {
+      setLoading(false);
       return setError('You’re already in this crew.');
     }
 
@@ -65,14 +69,14 @@ export default function JoinCrew() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='space-y-4'>
+      <DialogContent className='space-y-2'>
         <DialogTitle className='text-2xl font-bold text-purple-700 text-center'>
           Join a Crew
         </DialogTitle>
 
         <input
           type='text'
-          placeholder='Enter crew name'
+          placeholder='Enter join code'
           className='w-full border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 rounded'
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -80,9 +84,14 @@ export default function JoinCrew() {
 
         <button
           onClick={handleJoin}
-          className='w-full bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded font-semibold transition'
+          disabled={loading}
+          className='w-full flex justify-center items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed'
         >
-          Join Crew
+          {loading ? (
+            <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+          ) : (
+            'Join Crew'
+          )}
         </button>
 
         {error && <p className='text-red-500 text-sm text-center'>{error}</p>}
