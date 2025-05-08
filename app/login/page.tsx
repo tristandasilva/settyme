@@ -107,7 +107,7 @@ export default function LoginPage() {
               </h1>
               <p className='text-gray-600 text-sm'>
                 {isLogin
-                  ? 'Welcome back, festie fam ✨'
+                  ? 'Rally your crew and lock in your festival plans'
                   : 'Join the crew and let’s plan your best fest yet!'}
               </p>
             </div>
