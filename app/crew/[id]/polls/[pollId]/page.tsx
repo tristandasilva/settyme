@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation'; // at top
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import NavBar from '@/components/NavBar';
+import Loader from '@/components/Loader';
 
 type Poll = {
   id: string;
@@ -15,16 +17,19 @@ type Poll = {
   artist_2_name: string;
   artist_2_time: string;
   artist_2_stage: string;
+  crew_id: string;
 };
 
 export default function PollVotingPage() {
   const { pollId } = useParams();
   const supabase = createClient();
+  const router = useRouter();
 
   const [poll, setPoll] = useState<Poll | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [userVote, setUserVote] = useState<number | null>(null);
   const [votes, setVotes] = useState({ artist1: 0, artist2: 0 });
+  const [isCreator, setIsCreator] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +46,13 @@ export default function PollVotingPage() {
         .select('*')
         .eq('id', pollId)
         .single();
-      setPoll(pollData);
+
+      if (pollData) {
+        setPoll(pollData);
+        setIsCreator(user.id === pollData.creator_id);
+      } else {
+        router.push('/404');
+      }
 
       const { data: voteData } = await supabase
         .from('votes')
@@ -109,7 +120,11 @@ export default function PollVotingPage() {
   };
 
   if (loading || !poll) {
-    return <p className='text-center text-gray-600 mt-10'>Loading poll...</p>;
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -166,6 +181,41 @@ export default function PollVotingPage() {
           </strong>
           . You can change your vote at any time.
         </p>
+      )}
+      {isCreator && (
+        <div className='flex justify-center gap-4 mt-6'>
+          <Button
+            variant='outline'
+            onClick={() => {
+              router.push(`/crew/${poll.crew_id}/polls/${poll.id}/edit`);
+            }}
+          >
+            ✏️ Edit Poll
+          </Button>
+          <Button
+            variant='outline'
+            onClick={async () => {
+              const confirmed = confirm(
+                'Are you sure you want to delete this poll?'
+              );
+              if (!confirmed) return;
+
+              const { error } = await supabase
+                .from('polls')
+                .delete()
+                .eq('id', poll.id);
+
+              if (error) {
+                alert('Something went wrong while deleting.');
+                console.error(error);
+              } else {
+                router.push(`/crew/${poll.crew_id}/polls`);
+              }
+            }}
+          >
+            🗑️ Delete Poll
+          </Button>
+        </div>
       )}
     </div>
   );

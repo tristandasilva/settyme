@@ -9,9 +9,11 @@ import { PlusCircle } from 'lucide-react';
 export default function CreateCrew() {
   const [name, setName] = useState('');
   const [festival, setFestival] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleCreate = async () => {
+    setLoading(true);
     const supabase = createClient();
     const {
       data: { user },
@@ -31,6 +33,7 @@ export default function CreateCrew() {
       router.push(`/crew/${data.id}`);
     } else {
       alert(error?.message);
+      setLoading(false);
     }
   };
 
@@ -61,9 +64,14 @@ export default function CreateCrew() {
 
         <button
           onClick={handleCreate}
-          className='w-full bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded font-semibold transition'
+          disabled={loading}
+          className='w-full flex justify-center items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed'
         >
-          Create Crew
+          {loading ? (
+            <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+          ) : (
+            'Create Crew'
+          )}
         </button>
       </DialogContent>
     </Dialog>

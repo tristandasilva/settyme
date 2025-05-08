@@ -69,7 +69,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className='max-w-3xl mx-auto px-4 py-8 space-y-10'>
+    <div className='max-w-5xl mx-auto px-4 py-8 space-y-10'>
       <NavBar variant='gradient' />
       {/* Gradient header */}
       {/* <header className='flex justify-between items-center px-5 py-4 rounded- shadow-md bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600'>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
       {/* Welcome text */}
       <div className='text-center'>
         {loading ? (
-          <Skeleton className='h-8 w-40 mx-auto rounded-md' />
+          <Skeleton className='h-8 w-52 mx-auto rounded-md' />
         ) : (
           <h2 className='text-3xl font-extrabold text-purple-700 mb-2'>
             Welcome, {profile?.first_name || 'User'}!
@@ -106,23 +106,36 @@ export default function DashboardPage() {
 
       {/* Crew Section */}
       <section>
-        <h3 className='text-xl font-semibold text-gray-800 mb-4'>Your Crews</h3>
-
-        {crews.length === 0 ? (
-          <div className='bg-white border border-dashed border-purple-300 p-6 rounded-xl text-center shadow-sm'>
-            <p className='text-lg font-medium text-gray-700 mb-2'>
-              You’re not part of any crews yet!
-            </p>
-            <p className='text-sm text-gray-500 mb-4'>
-              You can create a new one or join an existing crew to get started.
-            </p>
+        <h3 className='text-xl font-semibold text-gray-800 mb-1'>Your Crews</h3>
+        {loading ? (
+          <div className='space-y-4 my-5'>
+            <Skeleton className='h-16 w-full rounded-md' />
+            <Skeleton className='h-16 w-full rounded-md' />
+            <Skeleton className='h-16 w-full rounded-md' />
           </div>
         ) : (
-          <ul className='space-y-4'>
-            {crews.map((crew) => (
-              <CrewCard key={crew.id} {...crew} />
-            ))}
-          </ul>
+          <div>
+            <p className='text-gray-500 text-sm mb-4'>
+              You are part of {crews.length} crew{crews.length !== 1 ? 's' : ''}
+            </p>
+            {crews.length === 0 ? (
+              <div className='bg-white border border-dashed border-purple-300 p-6 rounded-xl text-center shadow-sm'>
+                <p className='text-lg font-medium text-gray-700 mb-2'>
+                  You’re not part of any crews yet!
+                </p>
+                <p className='text-sm text-gray-500 mb-4'>
+                  You can create a new one or join an existing crew to get
+                  started.
+                </p>
+              </div>
+            ) : (
+              <ul className='space-y-4'>
+                {crews.map((crew) => (
+                  <CrewCard key={crew.id} {...crew} />
+                ))}
+              </ul>
+            )}
+          </div>
         )}
       </section>
 

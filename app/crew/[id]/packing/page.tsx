@@ -105,7 +105,7 @@ export default function PackingPage() {
   };
 
   return (
-    <div className='max-w-2xl mx-auto px-4 py-10 space-y-8'>
+    <div className='max-w-5xl mx-auto px-4 py-10 space-y-8'>
       <NavBar variant='default' />
 
       {/* Gradient Header */}

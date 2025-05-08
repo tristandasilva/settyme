@@ -10,6 +10,7 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import Loader from '@/components/Loader';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,12 +23,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [authCheckLoading, setAuthCheckLoading] = useState(true);
 
   useEffect(() => {
     const checkUser = async () => {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
-      if (data.user) router.push('/dashboard');
+
+      if (data.user) {
+        router.push('/dashboard');
+      } else {
+        setAuthCheckLoading(false);
+      }
     };
     checkUser();
   }, [router]);
@@ -80,6 +87,14 @@ export default function LoginPage() {
     setLoading(false);
     if (error) alert(error.message);
   };
+
+  if (authCheckLoading) {
+    return (
+      <div className='h-screen flex items-center justify-center'>
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className='flex items-center justify-center h-dvh bg-gradient-to-br from-purple-700 via-indigo-600 to-pink-500 px-4'>
@@ -161,7 +176,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className='bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold px-4 py-2 rounded w-full hover:opacity-90 transition'
                 >
-                  {loading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
+                  {loading ? 'Verifying...' : isLogin ? 'Log In' : 'Sign Up'}
                 </button>
               </>
             )}

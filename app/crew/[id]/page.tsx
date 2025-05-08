@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Users, PackageCheck, Car } from 'lucide-react';
+import { Users, PackageCheck, Car, DoorOpen } from 'lucide-react';
 import NavBar from '@/components/NavBar';
 import {
   Dialog,
@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import Loader from '@/components/Loader';
 
 type Crew = {
   id: string;
@@ -71,10 +72,15 @@ export default function CrewPage() {
     fetchCrew();
   }, [id, router]);
 
-  if (!crew) return <p className='text-center mt-20'>Loading...</p>;
+  if (!crew)
+    return (
+      <div className='h-screen flex items-center justify-center'>
+        <Loader />
+      </div>
+    );
 
   return (
-    <div className='max-w-3xl mx-auto px-4 py-7 space-y-8'>
+    <div className='max-w-5xl mx-auto px-4 py-7 space-y-8'>
       <NavBar variant='default' />
       {/* Gradient Header */}
       <header className='rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
@@ -146,7 +152,11 @@ export default function CrewPage() {
       <div className='pt-0 border-t border-gray-200'></div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant='destructive' className='w-full'>
+          <Button
+            variant='outline'
+            className='w-full justify-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-100 transition'
+          >
+            <DoorOpen size={18} />
             Leave Crew
           </Button>
         </DialogTrigger>

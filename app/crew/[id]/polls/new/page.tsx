@@ -1,7 +1,8 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import CreatePollForm from '@/components/CreatePollForm';
+import PollForm from '@/components/PollForm';
+import NavBar from '@/components/NavBar';
 
 export default function NewPollPage() {
   const { id: crewId } = useParams();
@@ -11,11 +12,12 @@ export default function NewPollPage() {
   }
 
   return (
-    <div className='max-w-2xl mx-auto px-4 py-10 space-y-6'>
-      <h1 className='text-2xl font-extrabold text-purple-700 text-center'>
-        Create a New Artist Conflict Poll
-      </h1>
-      <CreatePollForm crewId={crewId as string} />
+    <div className='max-w-5xl mx-auto px-4 py-10 space-y-6'>
+      <NavBar variant='gradient' />
+      {/* <h1 className='text-2xl font-extrabold text-purple-700 text-center'>
+        Create a Set Conflict Poll
+      </h1> */}
+      <PollForm crewId={crewId as string} />
     </div>
   );
 }

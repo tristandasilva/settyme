@@ -3,11 +3,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // at top
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import NavBar from '@/components/NavBar';
+import Loader from '@/components/Loader';
 
 type Poll = {
   id: string;
@@ -22,9 +24,11 @@ type Poll = {
 
 export default function CrewPollsPage() {
   const supabase = createClient();
+  const router = useRouter();
   const { id: crewId } = useParams();
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
+  const [navigating, setNavigating] = useState(false);
 
   useEffect(() => {
     const fetchPolls = async () => {
@@ -47,20 +51,31 @@ export default function CrewPollsPage() {
   }, [crewId]);
 
   return (
-    <div className='max-w-3xl mx-auto px-4 py-8 space-y-8'>
+    <div className='max-w-4xl mx-auto px-4 py-8 space-y-8'>
       <NavBar variant='gradient' />
       <div className='flex justify-between items-center'>
         <h1 className='text-2xl font-extrabold text-purple-700'>
           Artist Voting Polls
         </h1>
-        <Link href={`/crew/${crewId}/polls/new`}>
-          <Button className='bg-gradient-to-r from-purple-600 to-pink-500 text-white'>
-            Create New Poll
-          </Button>
-        </Link>
+        <Button
+          onClick={() => {
+            setNavigating(true);
+            router.push(`/crew/${crewId}/polls/new`);
+          }}
+          disabled={navigating}
+          className='bg-gradient-to-r from-purple-600 to-pink-500 text-white flex items-center gap-2'
+        >
+          {navigating ? (
+            <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+          ) : (
+            'Create New Poll'
+          )}
+        </Button>
       </div>
       {loading ? (
-        <p className='text-gray-600'>Loading polls...</p>
+        <div className='flex justify-center items-center h-48'>
+          <Loader />
+        </div>
       ) : polls.length === 0 ? (
         <div className='text-center text-gray-600'>
           <p>No polls yet for this crew.</p>
