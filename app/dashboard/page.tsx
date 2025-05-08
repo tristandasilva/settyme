@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
-
 import CrewCard from '@/components/CrewCard';
 import CreateCrew from '@/components/CreateCrew';
 import JoinCrew from '@/components/JoinCrew';
@@ -26,7 +25,6 @@ export default function DashboardPage() {
   const [crews, setCrews] = useState<Crew[]>([]);
   const [profile, setProfile] = useState<{ first_name: string } | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchData = async () => {
       const supabase = createClient();

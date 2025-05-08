@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from './ui/button';
 import { LogOut, Menu, X } from 'lucide-react';
+import ProfileDialog from './ProfileDialog';
 
 type NavBarProps = {
   variant?: 'default' | 'gradient';
@@ -13,6 +14,8 @@ type NavBarProps = {
 
 export default function NavBar({ variant = 'default' }: NavBarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -70,11 +73,37 @@ export default function NavBar({ variant = 'default' }: NavBarProps) {
                 >
                   Rideshare
                 </Link>
+                <Link
+                  href={`/crew/${crewId}/polls`}
+                  className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
+                >
+                  Artist Polls
+                </Link>
               </>
             )}
           </div>
         </div>
         <div className='hidden md:flex items-center'>
+          <div>
+            <Button
+              variant='ghost'
+              className={`${
+                isGradient
+                  ? 'text-white hover:bg-white/10'
+                  : 'text-purple-700 hover:bg-purple-100'
+              } text-sm flex items-center gap-1`}
+              onClick={() => setShowProfileDialog(true)}
+            >
+              Profile
+            </Button>
+            <ProfileDialog
+              open={showProfileDialog}
+              onClose={() => setShowProfileDialog(false)}
+              onSave={() => {
+                // Optional: trigger profile refresh or feedback
+              }}
+            />
+          </div>
           <Button
             variant='ghost'
             className={`${
@@ -109,6 +138,15 @@ export default function NavBar({ variant = 'default' }: NavBarProps) {
             >
               Dashboard
             </Link>
+            <div>
+              {' '}
+              <button
+                className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
+                onClick={() => setShowProfileDialog(true)}
+              >
+                Profile
+              </button>
+            </div>
             {crewId && (
               <>
                 <Link
@@ -122,6 +160,12 @@ export default function NavBar({ variant = 'default' }: NavBarProps) {
                   className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
                 >
                   Rideshare
+                </Link>
+                <Link
+                  href={`/crew/${crewId}/polls`}
+                  className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
+                >
+                  Artist Polls
                 </Link>
               </>
             )}

@@ -59,22 +59,21 @@ export default function LoginPage() {
         setLoading(false);
         return alert('An account already exists with this email.');
       } else {
+        // Proceed with sign up
+        const { data: signUpData, error: signUpError } =
+          await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { firstName, lastName },
+            },
+          });
+        console.log(signUpData);
+        if (signUpError) {
+          setLoading(false);
+          return alert(signUpError.message);
+        }
       }
-
-      // Proceed with sign up
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { firstName, lastName },
-        },
-      });
-
-      if (signUpError) {
-        setLoading(false);
-        return alert(signUpError.message);
-      }
-
       setSignUpSuccess(true);
     }
 

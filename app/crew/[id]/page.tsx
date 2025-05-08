@@ -74,7 +74,7 @@ export default function CrewPage() {
   if (!crew) return <p className='text-center mt-20'>Loading...</p>;
 
   return (
-    <div className='max-w-3xl mx-auto px-4 py-10 space-y-10'>
+    <div className='max-w-3xl mx-auto px-4 py-7 space-y-8'>
       <NavBar variant='default' />
       {/* Gradient Header */}
       <header className='rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
@@ -83,10 +83,11 @@ export default function CrewPage() {
       </header>
 
       {/* Tool Buttons */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
         <Button
           asChild
-          className='w-full justify-start gap-2 bg-purple-600 hover:bg-purple-700 text-white'
+          variant={'outline'}
+          className='w-full justify-start gap-2 text-purple-700 border-purple-600 hover:bg-purple-700'
         >
           <a href={`/crew/${id}/packing`}>
             <PackageCheck size={18} /> Packing List
@@ -102,8 +103,15 @@ export default function CrewPage() {
             <Car size={18} /> Rideshare Planner
           </a>
         </Button>
-      </div>
 
+        <Button
+          asChild
+          variant='outline'
+          className='w-full justify-start gap-2 text-purple-700 border-purple-600 hover:bg-purple-50'
+        >
+          <a href={`/crew/${id}/polls`}>🗳️ Artist Polls</a>
+        </Button>
+      </div>
       {/* Placeholder Widget */}
       <div className='bg-white/90 border border-dashed border-purple-300 p-6 rounded-xl text-center shadow-sm'>
         <p className='text-lg font-medium text-gray-700 mb-2'>
