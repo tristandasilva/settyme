@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createClient } from '../../lib/supabase/client';
@@ -15,48 +16,51 @@ import Loader from '@/components/Loader';
 export default function LoginPage() {
   const router = useRouter();
 
+  // State for form fields and auth flow
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(true); // toggle between login and signup
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const [authCheckLoading, setAuthCheckLoading] = useState(true);
+  const [authCheckLoading, setAuthCheckLoading] = useState(true); // waiting on Supabase session check
+  const [errorMessage, setErrorMessage] = useState('');
 
+  // Check if user is already logged in and redirect
   useEffect(() => {
     const checkUser = async () => {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
-
-      if (data.user) {
-        router.push('/dashboard');
-      } else {
-        setAuthCheckLoading(false);
-      }
+      if (data.user) router.push('/dashboard');
+      else setAuthCheckLoading(false);
     };
     checkUser();
   }, [router]);
 
-  const handleAuth = async () => {
+  // Handles login and signup logic
+  const handleAuth = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault(); // prevent form reload
     setLoading(true);
+    setErrorMessage('');
     const supabase = createClient();
 
+    // If signing up, validate password confirmation
     if (!isLogin && password !== confirmPassword) {
       setLoading(false);
-      return alert('Passwords do not match!');
+      return setErrorMessage('Passwords do not match.');
     }
 
     let error;
 
     if (isLogin) {
+      // Log in the user
       ({ error } = await supabase.auth.signInWithPassword({ email, password }));
       if (!error) router.push('/dashboard');
     } else {
-      // Check if this email already exists in the profiles table
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { data: existingProfile, error: profileError } = await supabase
+      // Check if a profile already exists with this email
+      const { data: existingProfile } = await supabase
         .from('profiles')
         .select('id')
         .eq('email', email)
@@ -64,30 +68,32 @@ export default function LoginPage() {
 
       if (existingProfile) {
         setLoading(false);
-        return alert('An account already exists with this email.');
-      } else {
-        // Proceed with sign up
-        const { data: signUpData, error: signUpError } =
-          await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: { firstName, lastName },
-            },
-          });
-        console.log(signUpData);
-        if (signUpError) {
-          setLoading(false);
-          return alert(signUpError.message);
-        }
+        return setErrorMessage('An account already exists with this email.');
       }
+
+      // Sign up the user with custom profile data
+      const { data: signUpData, error: signUpError } =
+        await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { firstName, lastName } },
+        });
+
+      console.log(signUpData);
+      if (signUpError) {
+        setLoading(false);
+        return setErrorMessage(signUpError.message);
+      }
+
+      // Show success message if signup succeeded
       setSignUpSuccess(true);
     }
 
     setLoading(false);
-    if (error) alert(error.message);
+    if (error) setErrorMessage(error.message);
   };
 
+  // While checking Supabase auth status
   if (authCheckLoading) {
     return (
       <div className='h-screen flex items-center justify-center'>
@@ -100,6 +106,7 @@ export default function LoginPage() {
     <div className='flex items-center justify-center h-dvh bg-gradient-to-br from-purple-700 via-indigo-600 to-pink-500 px-4'>
       <Card className='mx-auto w-full max-w-md bg-white/95 backdrop-blur shadow-xl rounded-xl overflow-hidden'>
         <div className='max-h-[90vh] overflow-y-auto p-4'>
+          {/* Header */}
           <CardHeader className='pb-2'>
             <div className='text-center space-y-2'>
               <h1 className='text-3xl font-extrabold text-purple-700'>
@@ -113,8 +120,10 @@ export default function LoginPage() {
             </div>
           </CardHeader>
 
-          <CardContent className='space-y-3'>
+          {/* Form Content */}
+          <CardContent>
             {signUpSuccess ? (
+              // Success state after sign-up
               <div className='text-center space-y-3'>
                 <h2 className='text-xl font-semibold text-purple-700'>
                   🎉 Almost there!
@@ -125,7 +134,9 @@ export default function LoginPage() {
                 </p>
               </div>
             ) : (
-              <>
+              // Main login/signup form
+              <form className='space-y-3' onSubmit={handleAuth}>
+                {/* First/Last name inputs shown only during signup */}
                 {!isLogin && (
                   <>
                     <input
@@ -145,6 +156,7 @@ export default function LoginPage() {
                   </>
                 )}
 
+                {/* Email input */}
                 <input
                   type='email'
                   value={email}
@@ -153,6 +165,7 @@ export default function LoginPage() {
                   className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
                 />
 
+                {/* Password input */}
                 <input
                   type='password'
                   value={password}
@@ -161,6 +174,7 @@ export default function LoginPage() {
                   className='border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3 w-full rounded'
                 />
 
+                {/* Confirm password shown only during signup */}
                 {!isLogin && (
                   <input
                     type='password'
@@ -171,17 +185,32 @@ export default function LoginPage() {
                   />
                 )}
 
+                {/* Submit button with spinner */}
                 <button
                   onClick={handleAuth}
                   disabled={loading}
-                  className='bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold px-4 py-2 rounded w-full hover:opacity-90 transition'
+                  className='bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold px-4 py-2 rounded w-full hover:opacity-90 transition flex justify-center items-center gap-2'
                 >
-                  {loading ? 'Verifying...' : isLogin ? 'Log In' : 'Sign Up'}
+                  {loading ? (
+                    <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                  ) : isLogin ? (
+                    'Log In'
+                  ) : (
+                    'Sign Up'
+                  )}
                 </button>
-              </>
+              </form>
+            )}
+
+            {/* Inline error display */}
+            {errorMessage && (
+              <div className='text-red-700 p-3 rounded text-sm'>
+                {errorMessage}
+              </div>
             )}
           </CardContent>
 
+          {/* Toggle login/signup and Google auth */}
           {!signUpSuccess && (
             <CardFooter className='text-center mt-4 flex flex-col gap-2'>
               <p className='text-sm text-gray-600'>
@@ -190,11 +219,16 @@ export default function LoginPage() {
                   : 'Already have an account?'}
               </p>
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setErrorMessage('');
+                  setIsLogin(!isLogin);
+                }}
                 className='text-purple-700 hover:underline text-sm font-medium'
               >
                 {isLogin ? 'Sign Up' : 'Log In'}
               </button>
+
+              {/* Google sign-in button */}
               <div className='mt-4 w-full'>
                 <Button
                   variant='outline'
@@ -208,7 +242,7 @@ export default function LoginPage() {
                       },
                     });
                     if (error) {
-                      alert('Google sign-in failed');
+                      setErrorMessage('Google sign-in failed');
                       console.error(error.message);
                     }
                   }}

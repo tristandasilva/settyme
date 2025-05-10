@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import NavBar from '@/components/NavBar';
+import BackToCrewButton from '@/components/BackToCrewButton';
 
 type RideshareEntry = {
   id: string;
@@ -68,8 +69,9 @@ export default function RidesharePage() {
   };
 
   return (
-    <div className='max-w-3xl mx-auto px-4 py-10 space-y-10'>
+    <div className='max-w-5xl mx-auto px-4 py-10 space-y-6'>
       <NavBar variant='default' />
+      <BackToCrewButton />
       {/* Gradient header */}
       <header className='rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
         <h1 className='text-3xl font-extrabold'>Rideshare Planner</h1>

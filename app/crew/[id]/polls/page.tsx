@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import NavBar from '@/components/NavBar';
 import Loader from '@/components/Loader';
+import BackToCrewButton from '@/components/BackToCrewButton';
 
 type Poll = {
   id: string;
@@ -51,8 +52,9 @@ export default function CrewPollsPage() {
   }, [crewId]);
 
   return (
-    <div className='max-w-4xl mx-auto px-4 py-8 space-y-8'>
+    <div className='max-w-5xl mx-auto px-4 py-8 space-y-6'>
       <NavBar variant='gradient' />
+      <BackToCrewButton />
       <div className='flex justify-between items-center px-1.5'>
         <h1 className='text-2xl font-extrabold text-purple-700'>
           Artist Voting Polls

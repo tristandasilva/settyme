@@ -35,6 +35,8 @@ export default function CrewPage() {
   const router = useRouter();
   const [crew, setCrew] = useState<Crew | null>(null);
   const [members, setMembers] = useState<CrewMember[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchCrew = async () => {
@@ -188,13 +190,23 @@ export default function CrewPage() {
                 {crew.join_code}
               </div>
               <Button
-                className='w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition'
+                className={`w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white transition relative ${
+                  successMessage ? 'bg-green-500' : ''
+                }`}
                 onClick={() => {
                   navigator.clipboard.writeText(crew.join_code);
-                  alert('Join code copied to clipboard!');
+                  setSuccessMessage('copied');
+                  // Reset after 2 seconds
+                  setTimeout(() => setSuccessMessage(''), 2000);
                 }}
               >
-                Copy Code
+                {successMessage ? (
+                  <span className='flex items-center justify-center gap-2'>
+                    Copied!
+                  </span>
+                ) : (
+                  'Copy Code'
+                )}
               </Button>
             </DialogContent>
           </Dialog>
@@ -210,7 +222,7 @@ export default function CrewPage() {
                   Leave This Crew
                 </Button>
               </DialogTrigger>
-              <DialogContent className='sm:max-w-[425px] space-y-6'>
+              <DialogContent className='sm:max-w-[425px]'>
                 <div className='space-y-1 text-center'>
                   <DialogTitle className='text-lg font-bold text-red-600'>
                     Are you sure?
@@ -222,8 +234,9 @@ export default function CrewPage() {
                 </div>
                 <Button
                   variant='destructive'
-                  className='w-full'
+                  className='w-full P-0'
                   onClick={async () => {
+                    setErrorMessage('');
                     const supabase = createClient();
                     const {
                       data: { user },
@@ -241,12 +254,17 @@ export default function CrewPage() {
                       router.push('/dashboard');
                     } else {
                       console.error('Failed to leave crew:', error.message);
-                      alert('Something went wrong.');
+                      setErrorMessage('Something went wrong.');
                     }
                   }}
                 >
                   Yes, Leave Crew
                 </Button>
+                {errorMessage && (
+                  <div className='text-red-700 rounded text-sm'>
+                    {errorMessage}
+                  </div>
+                )}
               </DialogContent>
             </Dialog>
           </div>
