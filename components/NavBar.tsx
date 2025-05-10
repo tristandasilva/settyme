@@ -132,14 +132,7 @@ export default function NavBar({ variant = 'default' }: NavBarProps) {
       {menuOpen && (
         <div className='md:hidden px-4 pb-6'>
           <div className='flex flex-col space-y-4'>
-            <Link
-              href='/dashboard'
-              className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
-            >
-              Dashboard
-            </Link>
             <div>
-              {' '}
               <button
                 className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
                 onClick={() => setShowProfileDialog(true)}
@@ -149,6 +142,12 @@ export default function NavBar({ variant = 'default' }: NavBarProps) {
             </div>
             {crewId && (
               <>
+                <Link
+                  href='/dashboard'
+                  className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
+                >
+                  Dashboard
+                </Link>
                 <Link
                   href={`/crew/${crewId}/packing`}
                   className={`text-sm ${textColor} ${hoverColor} active:underline underline-offset-4`}
