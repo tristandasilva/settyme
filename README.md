@@ -4,7 +4,7 @@ SetTyme is a full-stack festival crew planning app built with **Next.js**, **Sup
 
 ## [![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue)](https://www.settyme.com/login)
 
-## ✨ Features
+## Features
 
 - **Authentication** – Sign up/log in securely using Google or Email/Password
 - **Crew Creation & Membership** – Create or join a festival crew
@@ -15,7 +15,7 @@ SetTyme is a full-stack festival crew planning app built with **Next.js**, **Sup
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js, React, TypeScript, Tailwind CSS, ShadCN UI
 - **Backend**: Supabase (Database + Auth)
