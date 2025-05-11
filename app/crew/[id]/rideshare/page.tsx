@@ -7,20 +7,15 @@ import { User } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import NavBar from '@/components/NavBar';
 import BackToCrewButton from '@/components/BackToCrewButton';
-
-type RideshareEntry = {
-  id: string;
-  user_id: string;
-  is_driver: boolean;
-  seats: number;
-  note: string;
-};
+import RideshareItem from '@/components/RideShareItem';
+import { RideshareEntry } from '@/app/types/rideshare';
 
 export default function RidesharePage() {
   const { id } = useParams(); // crew_id
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [entries, setEntries] = useState<RideshareEntry[]>([]);
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [form, setForm] = useState({
     is_driver: true,
     seats: 1,
@@ -39,10 +34,30 @@ export default function RidesharePage() {
     const fetchEntries = async () => {
       const { data, error } = await supabase
         .from('rideshare')
-        .select('*')
-        .eq('crew_id', id);
+        .select(
+          `
+          id,
+          user_id,
+          is_driver,
+          seats,
+          note,
+          profiles (
+            first_name
+          )
+`
+        )
+        .eq('crew_id', id)
+        .order('created_at', { ascending: true }); // or false for newest first
 
-      if (!error) setEntries(data);
+      if (!error && data) {
+        const formatted = data.map((entry) => ({
+          ...entry,
+          profiles: Array.isArray(entry.profiles)
+            ? entry.profiles[0]
+            : entry.profiles,
+        }));
+        setEntries(formatted);
+      }
     };
 
     fetchEntries();
@@ -52,6 +67,7 @@ export default function RidesharePage() {
     if (!user) return;
 
     const { error } = await supabase.from('rideshare').upsert({
+      id: editingEntryId || undefined,
       crew_id: id,
       user_id: user.id,
       is_driver: form.is_driver,
@@ -62,9 +78,53 @@ export default function RidesharePage() {
     if (!error) {
       const { data } = await supabase
         .from('rideshare')
-        .select('*')
-        .eq('crew_id', id);
-      setEntries(data || []);
+        .select(
+          `
+          id,
+          user_id,
+          is_driver,
+          seats,
+          note,
+          profiles (
+            first_name
+          )
+`
+        )
+        .eq('crew_id', id)
+        .order('created_at', { ascending: true }); // or false for newest first
+
+      if (data) {
+        const formatted = data.map((entry) => ({
+          ...entry,
+          profiles: Array.isArray(entry.profiles)
+            ? entry.profiles[0]
+            : entry.profiles,
+        }));
+        setEntries(formatted);
+        setEditingEntryId(null); // reset edit mode
+        setForm({ is_driver: true, seats: 1, note: '' }); // clear form
+      }
+    }
+  };
+
+  // const handleEdit = (entry: RideshareEntry) => {
+  //   setForm({
+  //     is_driver: entry.is_driver,
+  //     seats: entry.seats,
+  //     note: entry.note,
+  //   });
+  //   setEditingEntryId(entry.id);
+  // };
+
+  const handleDelete = async (entryId: string) => {
+    const { error } = await supabase
+      .from('rideshare')
+      .delete()
+      .eq('id', entryId)
+      .eq('user_id', user?.id); // safety check on backend
+
+    if (!error) {
+      setEntries((prev) => prev.filter((e) => e.id !== entryId));
     }
   };
 
@@ -87,7 +147,7 @@ export default function RidesharePage() {
             Are you a driver or passenger?
           </label>
           <select
-            className='w-full border border-purple-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-purple-500'
+            className='w-full border border-purple-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500'
             value={form.is_driver ? 'driver' : 'passenger'}
             onChange={(e) =>
               setForm((f) => ({ ...f, is_driver: e.target.value === 'driver' }))
@@ -105,7 +165,7 @@ export default function RidesharePage() {
           <input
             type='number'
             min={1}
-            className='w-full border border-purple-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-purple-500'
+            className='w-full border border-purple-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500'
             value={form.seats}
             onChange={(e) =>
               setForm((f) => ({ ...f, seats: Number(e.target.value) }))
@@ -129,7 +189,7 @@ export default function RidesharePage() {
           onClick={handleSubmit}
           className='w-full bg-purple-600 hover:bg-purple-700 text-white'
         >
-          Save Rideshare Info
+          {editingEntryId ? 'Update Entry' : 'Save Rideshare Info'}
         </Button>
       </section>
 
@@ -143,19 +203,54 @@ export default function RidesharePage() {
         ) : (
           <ul className='space-y-2'>
             {entries.map((entry) => (
-              <li
+              <RideshareItem
                 key={entry.id}
-                className='border p-3 rounded bg-white text-sm flex flex-col shadow-sm'
-              >
-                <span className='font-medium text-purple-700'>
-                  {entry.is_driver ? '🚗 Driver' : '🧍 Passenger'} –{' '}
-                  {entry.seats}{' '}
-                  {entry.is_driver ? 'seat(s) available' : 'seat(s) needed'}
-                </span>
-                {entry.note && (
-                  <span className='text-gray-500 mt-1'>{entry.note}</span>
-                )}
-              </li>
+                entry={entry}
+                currentUserId={user?.id || null}
+                isEditing={editingEntryId === entry.id}
+                onEdit={() => setEditingEntryId(entry.id)}
+                onCancel={() => setEditingEntryId(null)}
+                onDelete={() => handleDelete(entry.id)}
+                onSave={async (updated) => {
+                  const { error } = await supabase
+                    .from('rideshare')
+                    .update({
+                      is_driver: updated.is_driver,
+                      seats: updated.seats,
+                      note: updated.note,
+                    })
+                    .eq('id', updated.id)
+                    .eq('user_id', user?.id);
+
+                  if (!error) {
+                    const { data } = await supabase
+                      .from('rideshare')
+                      .select(
+                        `
+              id,
+              user_id,
+              is_driver,
+              seats,
+              note,
+              profiles (
+                first_name
+              )
+            `
+                      )
+                      .eq('crew_id', id);
+                    if (data) {
+                      const formatted = data.map((entry) => ({
+                        ...entry,
+                        profiles: Array.isArray(entry.profiles)
+                          ? entry.profiles[0]
+                          : entry.profiles,
+                      }));
+                      setEntries(formatted);
+                      setEditingEntryId(null);
+                    }
+                  }
+                }}
+              />
             ))}
           </ul>
         )}
