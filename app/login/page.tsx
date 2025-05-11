@@ -96,7 +96,7 @@ export default function LoginPage() {
   // While checking Supabase auth status
   if (authCheckLoading) {
     return (
-      <div className='h-screen flex items-center justify-center'>
+      <div className='min-h-dvh flex items-center justify-center px-4'>
         <Loader />
       </div>
     );
