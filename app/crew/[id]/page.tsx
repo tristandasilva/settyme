@@ -103,7 +103,22 @@ export default function CrewPage() {
               </CardHeader>
               <CardContent>
                 <p className='text-sm text-purple-700/90'>
-                  Organize your must-haves so no one forgets their glitter.
+                  Keep track of what to bring and what you have packed.
+                </p>
+              </CardContent>
+            </Card>
+          </a>
+
+          <a href={`/crew/${id}/polls`}>
+            <Card className='flex flex-col gap-3 border-l-4 border-purple-600 bg-white hover:shadow-md hover:scale-[1.02] hover:bg-purple-50 transition'>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2 text-purple-700'>
+                  <Vote size={20} /> Artist Polls
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className='text-sm text-purple-700/90'>
+                  Let the crew vote on who to see and avoid conflicts.
                 </p>
               </CardContent>
             </Card>
@@ -119,22 +134,7 @@ export default function CrewPage() {
               </CardHeader>
               <CardContent>
                 <p className='text-sm text-purple-700/90'>
-                  Coordinate who’s riding with who and bumpin’ the aux.
-                </p>
-              </CardContent>
-            </Card>
-          </a>
-
-          <a href={`/crew/${id}/polls`}>
-            <Card className='flex flex-col gap-3 border-l-4 border-purple-600 bg-white hover:shadow-md hover:scale-[1.02] hover:bg-purple-50 transition'>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2 text-purple-700'>
-                  <Vote size={20} /> Artist Polls
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className='text-sm text-purple-700/90'>
-                  Let your crew vote on which set to rage at when sets clash.
+                  Coordinate rides to the festival and back home.
                 </p>
               </CardContent>
             </Card>

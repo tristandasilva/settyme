@@ -38,6 +38,9 @@ export default function PollForm({ crewId, poll, onSubmit }: PollFormProps) {
   });
   const [title, setTitle] = useState(poll?.title || '');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,20 +92,17 @@ export default function PollForm({ crewId, poll, onSubmit }: PollFormProps) {
     setLoading(false);
 
     if (error) {
-      alert('Something went wrong');
+      setErrorMessage('Something went wrong');
       console.error(error);
     } else {
-      alert(poll?.id ? 'Poll updated!' : 'Poll created!');
+      setSuccessMessage(poll?.id ? 'Poll updated!' : 'Poll created!');
       if (onSubmit) onSubmit(true);
       else router.push(`/crew/${crewId}/polls`);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className='space-y-6 bg-white/90 backdrop-blur border border-purple-100 rounded-xl p-6 shadow-md'
-    >
+    <form onSubmit={handleSubmit} className='space-y-6'>
       <h2 className='text-2xl font-bold text-purple-700 text-center'>
         {poll?.id
           ? '✏️ Edit Set Conflict Poll'
@@ -110,7 +110,7 @@ export default function PollForm({ crewId, poll, onSubmit }: PollFormProps) {
       </h2>
 
       <input
-        placeholder='Optional title (e.g. "Who are we seeing Friday night?")'
+        placeholder='Title (e.g. "Who are we seeing Friday night?")'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className='input-style'
@@ -177,6 +177,7 @@ export default function PollForm({ crewId, poll, onSubmit }: PollFormProps) {
           ? 'Save Changes'
           : 'Create Poll'}
       </Button>
+      {errorMessage && <p className='text-red-500 text-sm'>{errorMessage}</p>}
     </form>
   );
 }

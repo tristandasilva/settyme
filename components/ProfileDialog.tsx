@@ -16,9 +16,13 @@ export default function ProfileDialog({ open, onClose, onSave }: Props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setErrorMessage('');
+      setSuccessMessage('');
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -37,6 +41,8 @@ export default function ProfileDialog({ open, onClose, onSave }: Props) {
   }, [open]);
 
   const handleSave = async () => {
+    setErrorMessage('');
+    setSuccessMessage('');
     setLoading(true);
     const {
       data: { user },
@@ -50,12 +56,11 @@ export default function ProfileDialog({ open, onClose, onSave }: Props) {
     setLoading(false);
 
     if (error) {
-      alert('Something went wrong while saving.');
+      setErrorMessage('Something went wrong while saving.');
       console.error(error);
     } else {
-      alert('Profile updated!');
+      setSuccessMessage('Profile updated!');
       onSave?.();
-      onClose();
     }
   };
 
@@ -90,6 +95,10 @@ export default function ProfileDialog({ open, onClose, onSave }: Props) {
             {loading ? 'Saving...' : 'Save'}
           </Button>
         </div>
+        {errorMessage && <p className='text-red-500 text=sm'>{errorMessage}</p>}
+        {successMessage && (
+          <p className='text-green-600 text-sm'>{successMessage}</p>
+        )}
       </DialogContent>
     </Dialog>
   );

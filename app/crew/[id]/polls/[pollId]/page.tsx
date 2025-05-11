@@ -7,6 +7,14 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import NavBar from '@/components/NavBar';
 import Loader from '@/components/Loader';
+import { ArrowLeft } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 type Poll = {
   id: string;
@@ -31,6 +39,7 @@ export default function PollVotingPage() {
   const [votes, setVotes] = useState({ artist1: 0, artist2: 0 });
   const [isCreator, setIsCreator] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,6 +139,16 @@ export default function PollVotingPage() {
   return (
     <div className='max-w-5xl mx-auto px-4 py-10 space-y-6'>
       <NavBar variant='gradient' />
+      <div className='mt-0'>
+        <Button
+          variant='ghost'
+          className='text-purple-700 hover:underline flex items-center gap-1'
+          onClick={() => router.push(`/crew/${poll.crew_id}/polls`)}
+        >
+          <ArrowLeft size={16} />
+          Back to Polls
+        </Button>
+      </div>
       <h1 className='text-2xl font-extrabold text-purple-700 text-center mb-6'>
         {poll.title || 'Set Conflict Poll'}
       </h1>
@@ -192,31 +211,47 @@ export default function PollVotingPage() {
           >
             ✏️ Edit Poll
           </Button>
-          <Button
-            variant='outline'
-            onClick={async () => {
-              const confirmed = confirm(
-                'Are you sure you want to delete this poll?'
-              );
-              if (!confirmed) return;
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant='outline'>🗑️ Delete Poll</Button>
+            </DialogTrigger>
+            <DialogContent className='sm:max-w-[425px]'>
+              <div className='space-y-1 text-center'>
+                <DialogTitle className='text-lg font-bold text-red-600'>
+                  Are you sure?
+                </DialogTitle>
+                <DialogDescription className='text-gray-600'>
+                  This action cannot be undone. Are you sure you want to delete
+                  this poll?
+                </DialogDescription>
+              </div>
+              <Button
+                variant='destructive'
+                className='w-full P-0'
+                onClick={async () => {
+                  const { error } = await supabase
+                    .from('polls')
+                    .delete()
+                    .eq('id', poll.id);
 
-              const { error } = await supabase
-                .from('polls')
-                .delete()
-                .eq('id', poll.id);
-
-              if (error) {
-                alert('Something went wrong while deleting.');
-                console.error(error);
-              } else {
-                router.push(`/crew/${poll.crew_id}/polls`);
-              }
-            }}
-          >
-            🗑️ Delete Poll
-          </Button>
+                  if (error) {
+                    setErrorMessage('Something went wrong while deleting.');
+                    console.error(error);
+                  } else {
+                    router.push(`/crew/${poll.crew_id}/polls`);
+                  }
+                }}
+              >
+                Yes, delete it
+              </Button>
+              {errorMessage && (
+                <div className='text-red-700 rounded text-sm'>HIIII</div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       )}
+      {errorMessage && <p className='text-red-500 text-sm'>HIIIII</p>}
     </div>
   );
 }

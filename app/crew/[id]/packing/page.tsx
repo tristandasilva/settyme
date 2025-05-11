@@ -120,7 +120,7 @@ export default function PackingPage() {
       {/* Page Header */}
       <header className='rounded-xl bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
         <h1 className='text-3xl font-extrabold'>Packing List</h1>
-        <p className='text-sm text-white/80 mt-1'>Check it off as you go ✨</p>
+        <p className='text-sm text-white/80 mt-1'>Check it off as you go.</p>
       </header>
 
       {/* Input to add new packing item */}
@@ -145,7 +145,7 @@ export default function PackingPage() {
       {items.length === 0 && (
         <div className='text-center border border-dashed border-purple-300 bg-white/90 p-6 rounded-xl shadow-sm'>
           <p className='text-lg font-semibold text-purple-700 mb-1'>
-            No packing items yet
+            No packing items yet 📋
           </p>
           <p className='text-sm text-gray-600 mb-4'>
             Your crew hasn&apos;t started packing. Add some essentials so no one
