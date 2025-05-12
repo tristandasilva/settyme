@@ -52,13 +52,19 @@ export default function CrewPollsPage() {
   }, [crewId]);
 
   return (
-    <div className='max-w-5xl mx-auto px-4 py-8 space-y-6'>
-      <NavBar variant='gradient' />
+    <div className='max-w-5xl mx-auto px-4 py-8 space-y-5'>
+      <NavBar variant='default' />
       <BackToCrewButton />
+      <header className='rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-4 shadow-md text-white text-center'>
+        <h1 className='text-3xl font-extrabold'>Artist Polls</h1>
+        <p className='text-sm text-white/80 mt-1'>
+          Vote on who to see and avoid set conflicts.
+        </p>
+      </header>
       <div className='flex justify-between items-center px-1.5'>
-        <h1 className='text-2xl font-extrabold text-purple-700'>
+        {/* <h1 className='text-2xl font-extrabold text-purple-700'>
           Artist Voting Polls
-        </h1>
+        </h1> */}
         {polls.length > 0 && (
           <Button
             onClick={() => {

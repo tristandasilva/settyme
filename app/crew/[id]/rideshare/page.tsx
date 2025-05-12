@@ -129,7 +129,7 @@ export default function RidesharePage() {
   };
 
   return (
-    <div className='max-w-5xl mx-auto px-4 py-10 space-y-6'>
+    <div className='max-w-5xl mx-auto px-4 py-10 space-y-5'>
       <NavBar variant='default' />
       <BackToCrewButton />
       {/* Gradient header */}
@@ -189,7 +189,7 @@ export default function RidesharePage() {
           onClick={handleSubmit}
           className='w-full bg-purple-600 hover:bg-purple-700 text-white'
         >
-          {editingEntryId ? 'Update Entry' : 'Save Rideshare Info'}
+          Save Rideshare Info
         </Button>
       </section>
 

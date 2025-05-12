@@ -137,7 +137,7 @@ export default function PollVotingPage() {
   }
 
   return (
-    <div className='max-w-5xl mx-auto px-4 py-10 space-y-6'>
+    <div className='max-w-5xl mx-auto px-4 py-10 space-y-5'>
       <NavBar variant='gradient' />
       <div className='mt-0'>
         <Button

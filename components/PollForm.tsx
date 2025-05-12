@@ -104,9 +104,7 @@ export default function PollForm({ crewId, poll, onSubmit }: PollFormProps) {
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       <h2 className='text-2xl font-bold text-purple-700 text-center'>
-        {poll?.id
-          ? '✏️ Edit Set Conflict Poll'
-          : '🪩 Create a Set Conflict Poll'}
+        {poll?.id ? '✏️ Edit Set Conflict Poll' : 'Create a Set Conflict Poll'}
       </h2>
 
       <input
