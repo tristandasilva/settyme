@@ -16,6 +16,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import Loader from '@/components/Loader';
+import CrewEditDialog from '@/components/CrewEditDialog';
+import { Pencil2Icon } from '@radix-ui/react-icons';
 
 type Crew = {
   id: string;
@@ -83,7 +85,21 @@ export default function CrewPage() {
     <div className='max-w-5xl mx-auto px-4 py-7 space-y-8'>
       <NavBar variant='default' />
       {/* Gradient Header */}
-      <header className='rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-5 shadow-md text-center text-white'>
+      <header className='relative rounded-xl bg-gradient-to-r from-purple-700 via-pink-500 to-indigo-600 px-6 py-5 shadow-md text-center text-white'>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant='ghost'
+              className='absolute right-3 top-8  text-white border-white/30 hover:bg-white/20 transition'
+            >
+              <Pencil2Icon />
+            </Button>
+          </DialogTrigger>
+          <CrewEditDialog
+            crew={crew}
+            onSave={(updatedCrew) => setCrew({ ...crew!, ...updatedCrew })}
+          />
+        </Dialog>
         <h1 className='text-3xl font-extrabold'>{crew.name}</h1>
         <p className='text-sm text-white/80 mt-1'>Festival: {crew.festival}</p>
       </header>
