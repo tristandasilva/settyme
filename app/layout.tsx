@@ -13,22 +13,20 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
+  title: 'SetTyme | Plan Your Ultimate Festival Crew Experience',
+  description:
+    'Create crews, plan rideshares, vote on artists, and get ready for your next festival with SetTyme.',
   metadataBase: new URL('https://settyme.com'),
-  title: {
-    default: 'SetTyme',
-    template: '%s | SetTyme',
-  },
-  description: 'Plan your music festival experience with friends.',
   openGraph: {
-    title: 'SetTyme',
+    title: 'SetTyme | Plan Your Ultimate Festival Crew Experience',
     description:
-      'Create crews, plan rideshares, vote on artists, and prep for your next festival.',
+      'Create crews, plan rideshares, vote on artists, and get ready for your next festival with SetTyme.',
     url: 'https://settyme.com',
     siteName: 'SetTyme',
     images: [
       {
-        url: './favicon.png',
+        url: './favorite.png',
         width: 1200,
         height: 630,
         alt: 'SetTyme Festival Planner',
@@ -39,13 +37,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SetTyme',
+    title: 'SetTyme | Plan Your Ultimate Festival Crew Experience',
     description:
-      'Create crews, plan rideshares, vote on artists, and prep for your next festival.',
-    images: ['./favicon.png'],
-  },
-  icons: {
-    icon: '/favicon.png',
+      'Create crews, plan rideshares, vote on artists, and get ready for your next festival with SetTyme.',
+    images: ['./favorite.png'],
   },
   viewport: 'width=device-width, initial-scale=1',
   robots: {
